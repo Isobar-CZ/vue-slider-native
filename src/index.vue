@@ -39,7 +39,7 @@
 					class="scroller__content row"
 				>
 					<component
-						:is="computedItemComponent"
+						:is="component"
 						v-for="(item, index) of items"
 						:id="`${scrollerId}-${index}`"
 						:key="`element-${index}`"
@@ -79,24 +79,36 @@
 	import {debounce} from 'lodash-es';
 
 	export default {
-		name: 'DentsuScroller',
+		name: 'VueSliderNative',
 
 		props: {
 			scrollerId: {
 				type: String,
-				required: true
+				default: 'scroller'
 			},
 			items: {
 				type: Array,
 				required: true
 			},
-			itemComponent: {
-				type: String,
+			component: {
+				type: Object,
 				required: true
 			},
-			moveOnClick: {
-				type: Boolean,
-				default: false
+			options: {
+				type: Object,
+				default: () => {
+					return {};
+				}
+				/*
+				possibleOptions: {
+					moveOnClick: Boolean,
+					centerMode: Boolean,
+					sticky: Boolean,
+					TODO:
+					dots
+					arrows
+				}
+				*/
 			}
 		},
 
@@ -155,23 +167,24 @@
 
 		methods: {
 			setHighlightedItems() {
-				switch (this.$w.layout) {
-					case 'tiny':
-					case 'phone':
-						this.highlightedItems = 1;
-						break;
-					case 'tablet-portrait':
-					case 'tablet-landscape':
-						this.highlightedItems = 2;
-						break;
-					case 'desktop':
-					case 'desktop-medium':
-						this.highlightedItems = 3;
-						break;
-					default:
-						this.highlightedItems = 4;
-						break;
-				}
+				// switch (this.$w.layout) {
+				// 	case 'tiny':
+				// 	case 'phone':
+				// 		this.highlightedItems = 1;
+				// 		break;
+				// 	case 'tablet-portrait':
+				// 	case 'tablet-landscape':
+				// 		this.highlightedItems = 2;
+				// 		break;
+				// 	case 'desktop':
+				// 	case 'desktop-medium':
+				// 		this.highlightedItems = 3;
+				// 		break;
+				// 	default:
+				// 		this.highlightedItems = 4;
+				// 		break;
+				// }
+				this.highlightedItems = 1;
 			},
 
 			arrowNavigation(direction) {
@@ -211,10 +224,11 @@
 
 			moveCarousel(moveTo, origin) {
 				if (!this.movementOrigin) {
-					if (origin === 'item' && !this.moveOnClick) {
+					console.log('test');
+					if (origin === 'item' && !this.options.moveOnClick) {
 						return;
 					}
-					const direction = moveTo > this.activeItem ? 'right' : 'left';
+					// const direction = moveTo > this.activeItem ? 'right' : 'left';
 
 					this.movementOrigin = origin;
 					this.activeItem = moveTo;
@@ -229,6 +243,8 @@
 						// TODO: scroll to last element seems to be getting higher value than necessary
 						offset = (this.$refs['scroller-row'].offsetLeft * -1) - 20;
 					}
+
+					console.log( `#${this.scrollerId}`);
 
 					this.$scrollTo(element, 300, {
 						container: `#${this.scrollerId}`,
@@ -292,7 +308,11 @@
 		}
 
 		&__content {
+			display: flex;
 			flex-wrap: nowrap;
+			max-width: rem(1200);
+			margin: 0 auto;
+			padding: 0 rem(15);
 
 			// emulate padding-right for last element in scroller
 			&::before,
@@ -376,5 +396,15 @@
 				}
 			}
 		}
+	}
+
+	.fade-enter-active,
+	.fade-leave-active {
+		transition: opacity $transition-duration-default ease-in-out;
+	}
+
+	.fast-fade-enter-active,
+	.fast-fade-leave-active {
+		transition: opacity ($transition-duration-default/2) ease-in-out;
 	}
 </style>

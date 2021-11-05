@@ -1,0 +1,21 @@
+@mixin hideScrollbar() {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  scrollbar-height: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@function rem($size) {
+  $remSize: $size / 16;
+  @return $remSize * 1rem;
+}
+
+@function em($size, $base) {
+  $emSize: $size / $base;
+  @return $emSize * 1em;
+}
+
+$transition-duration-default: 300ms;

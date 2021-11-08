@@ -5,26 +5,40 @@
 		@keydown.right="arrowNavigation('next')"
 	>
 		<div class="scroller__wrapper">
-			<div class="scroller__arrows row">
+			<div v-if="computedOptions.arrows" class="scroller__arrows row">
 				<transition name="fade">
 					<button
-						v-if="!isOnStart"
+						v-show="!isOnStart"
 						class="scroller__arrow scroller__arrow--prev svg"
 						@click="arrowNavigation('prev')"
 					>
-						<svg class="svg-icon"><use class="svg-icon-inner" xlink:href="#chevron-large-icon" /></svg>
-						<span>Previous</span>
+						<template v-if="!$slots['prevArrow']">
+							<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<path d="M15.41 16.58L10.83 12L15.41 7.41L14 6L8 12L14 18L15.41 16.58Z" fill="currentColor" />
+							</svg>
+
+							<span>Previous</span>
+						</template>
+
+						<slot v-else name="prevArrow" />
 					</button>
 				</transition>
 
 				<transition name="fade">
 					<button
-						v-if="!isOnEnd"
+						v-show="!isOnEnd"
 						class="scroller__arrow scroller__arrow--next svg"
 						@click="arrowNavigation('next')"
 					>
-						<span>Next</span>
-						<svg class="svg-icon"><use class="svg-icon-inner" xlink:href="#chevron-large-icon" /></svg>
+						<template v-if="!$slots['prevArrow']">
+							<span>Next</span>
+
+							<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<path d="M8.58984 16.58L13.1698 12L8.58984 7.41L9.99984 6L15.9998 12L9.99984 18L8.58984 16.58Z" fill="currentColor" />
+							</svg>
+						</template>
+
+						<slot v-else name="prevArrow" />
 					</button>
 				</transition>
 			</div>
@@ -46,9 +60,9 @@
 						:item="item"
 						class="scroller__item"
 						:class="{
-							'is-active': (index === activeItem) || (index > activeItem && index < activeItem + highlightedItems),
+							'is-active': (index === activeItem) || (index > activeItem && index < activeItem + computedOptions.highlightItems),
 							'is-prev': index < activeItem,
-							'is-next': index > activeItem + highlightedItems
+							'is-next': index > activeItem + computedOptions.highlightItems
 						}"
 						@click.native="moveCarousel(index, 'item')"
 					/>
@@ -64,7 +78,7 @@
 			</div>
 		</div>
 
-		<div class="scroller__dots">
+		<div v-if="computedOptions.dots" class="scroller__dots">
 			<button
 				v-for="index in itemCount"
 				:key="index"
@@ -76,7 +90,22 @@
 </template>
 
 <script>
+	// eslint-disable-next-line
+	import Vue from 'vue';
+	import VueScrollTo from 'vue-scrollto';
 	import {debounce} from 'lodash-es';
+
+	Vue.use(VueScrollTo);
+
+	const defaultOptions = {
+		moveOnClick: true,
+		centerMode: false,
+		sticky: false,
+		dots: false,
+		arrows: true,
+		highlightItems: 1,
+		preactivatedItem: null
+	};
 
 	export default {
 		name: 'VueSliderNative',
@@ -96,19 +125,7 @@
 			},
 			options: {
 				type: Object,
-				default: () => {
-					return {};
-				}
-				/*
-				possibleOptions: {
-					moveOnClick: Boolean,
-					centerMode: Boolean,
-					sticky: Boolean,
-					TODO:
-					dots
-					arrows
-				}
-				*/
+				default: () => {}
 			}
 		},
 
@@ -116,8 +133,7 @@
 			return {
 				debouncedHandleHorizontalScroll: null,
 				movementOrigin: null,
-				activeItem: 0,
-				highlightedItems: 0,
+				activeItem: this.options.preactivatedItem ? this.options.preactivatedItem : 0,
 				isOnStart: true,
 				isOnEnd: false,
 				firstMove: true
@@ -125,17 +141,18 @@
 		},
 
 		computed: {
+			computedOptions() {
+				return {
+					...defaultOptions,
+					...this.options
+				};
+			},
 			itemCount() {
 				return this.items.length;
 			}
 		},
 
 		watch: {
-			'$w.resize.width.end': {
-				handler() {
-					this.setHighlightedItems();
-				}
-			},
 			activeItem() {
 				this.$emit('activeItemUpdated', this.activeItem);
 			}
@@ -144,7 +161,6 @@
 		mounted() {
 			this.debouncedHandleHorizontalScroll = debounce(this.handleScroll, 50);
 			this.$refs.scroller.addEventListener('scroll', this.debouncedHandleHorizontalScroll);
-			this.setHighlightedItems();
 
 			const preactivated = this.items.findIndex((item) => item.preactivated);
 			if (preactivated && !this.isResponsiveVersion) {
@@ -157,8 +173,6 @@
 					this.moveCarousel(preactivated, 'preactivated');
 				}, 100);
 			}
-
-			this.setHighlightedItems();
 		},
 
 		beforeDestroy() {
@@ -166,27 +180,6 @@
 		},
 
 		methods: {
-			setHighlightedItems() {
-				// switch (this.$w.layout) {
-				// 	case 'tiny':
-				// 	case 'phone':
-				// 		this.highlightedItems = 1;
-				// 		break;
-				// 	case 'tablet-portrait':
-				// 	case 'tablet-landscape':
-				// 		this.highlightedItems = 2;
-				// 		break;
-				// 	case 'desktop':
-				// 	case 'desktop-medium':
-				// 		this.highlightedItems = 3;
-				// 		break;
-				// 	default:
-				// 		this.highlightedItems = 4;
-				// 		break;
-				// }
-				this.highlightedItems = 1;
-			},
-
 			arrowNavigation(direction) {
 				if (!this.movementOrigin) {
 					const moveTo = direction === 'prev' ? this.activeItem - 1 : this.activeItem + 1;
@@ -201,7 +194,7 @@
 					const carouselItems = this.getScrollerHtmlElements();
 					let xBoundaries;
 
-					if (this.options.centerMode && !this.isResponsiveVersion) {
+					if (this.computedOptions.centerMode && !this.isResponsiveVersion) {
 						xBoundaries = carouselItems.map((element) => (row.offsetWidth / 2) - (carouselItems[0].offsetWidth / 2) - element.getBoundingClientRect().x);
 					} else {
 						xBoundaries = carouselItems.map((element) => row.offsetLeft - element.getBoundingClientRect().x);
@@ -210,7 +203,7 @@
 					const closestValue = xBoundaries.reduce((prev, curr) => (Math.abs(curr) < Math.abs(prev) ? curr : prev));
 					const closestIndex = xBoundaries.indexOf(closestValue);
 
-					if (this.options.sticky) {
+					if (this.computedOptions.sticky) {
 						this.moveCarousel(closestIndex);
 					} else {
 						this.activeItem = closestIndex;
@@ -224,8 +217,7 @@
 
 			moveCarousel(moveTo, origin) {
 				if (!this.movementOrigin) {
-					console.log('test');
-					if (origin === 'item' && !this.options.moveOnClick) {
+					if (origin === 'item' && !this.computedOptions.moveOnClick) {
 						return;
 					}
 					// const direction = moveTo > this.activeItem ? 'right' : 'left';
@@ -243,8 +235,6 @@
 						// TODO: scroll to last element seems to be getting higher value than necessary
 						offset = (this.$refs['scroller-row'].offsetLeft * -1) - 20;
 					}
-
-					console.log( `#${this.scrollerId}`);
 
 					this.$scrollTo(element, 300, {
 						container: `#${this.scrollerId}`,
@@ -310,12 +300,8 @@
 		&__content {
 			display: flex;
 			flex-wrap: nowrap;
-			max-width: rem(1200);
-			margin: 0 auto;
-			padding: 0 rem(15);
 
 			// emulate padding-right for last element in scroller
-			&::before,
 			&::after {
 				display: block;
 				flex: 0 0 rem(15);
@@ -334,7 +320,6 @@
 			align-items: center;
 			justify-content: center;
 			padding: 0;
-			font-size: rem(32);
 			font-family: inherit;
 			background: none;
 			border: 0;
@@ -347,7 +332,6 @@
 
 				svg {
 					margin-right: rem(10);
-					transform: scale(-1);
 				}
 			}
 
@@ -361,7 +345,7 @@
 
 			&:hover,
 			&:focus {
-				text-shadow: -0.25px -0.25px 0 #262626, 0.25px 0.25px #262626;
+				color: $color-active;
 			}
 		}
 
@@ -388,11 +372,11 @@
 
 				&:hover,
 				&:focus {
-					background: darken(#ddd, 10);
+					background: rgba($color-active, 0.5);
 				}
 
 				&.is-active {
-					background: black;
+					background: $color-active;
 				}
 			}
 		}
@@ -403,8 +387,8 @@
 		transition: opacity $transition-duration-default ease-in-out;
 	}
 
-	.fast-fade-enter-active,
-	.fast-fade-leave-active {
-		transition: opacity ($transition-duration-default/2) ease-in-out;
+	.fade-enter,
+	.fade-leave-to {
+		opacity: 0;
 	}
 </style>

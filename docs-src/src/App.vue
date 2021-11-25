@@ -25,6 +25,7 @@
 		<div class="row">
 			<div class="column">
 				<h2>Usage</h2>
+				<p>In template</p>
 				<vue-code-highlight language="html">
 					<pre>
 &lt;vue-slider-native
@@ -34,6 +35,7 @@
 	:options="options"
 /&gt;</pre>
 				</vue-code-highlight>
+				<p>In JS</p>
 				<vue-code-highlight language="javascript">
 					<pre>
 import VueSliderNative from 'VueSliderNative';
@@ -91,21 +93,42 @@ export default {
 				<h2>Callbacks</h2>
 				<h3>activeItemUpdated(activeItem)</h3>
 				<p>
-					&lt;VueSliderNative @activeItemUpdated="doSomeAction(activeItem)"&gt;
+					&lt;VueSliderNative @activeItemUpdated="doSomeAction(activeItemIndex)"&gt;
 				</p>
 			</div>
 		</div>
 
 		<div class="row">
 			<div class="column">
-				<h2>Customizing & translating arrows</h2>
-				<p>Custom arrows with &lt;template v-slot:prevArrow /&gt; and &lt;template v-slot:nextArrow /&gt;</p>
+				<h2>Custom arrows & translating arrow labels</h2>
+				<p>
+					In case you need to change default arrows you can do so with
+					&lt;template v-slot:prevArrow /&gt; and &lt;template v-slot:nextArrow /&gt;
+					<br>In these slots you can style and change label in any way you want.
+				</p>
+
+				<vue-code-highlight language="html">
+					<pre>
+&lt;vue-slider-native&gt;
+	&lt;template v-slot:prevArrow&gt;
+		&lt;div class="custom-arrow"&gt;
+			custom prev label
+		&lt;/div&gt;
+	&lt;/template&gt;
+&lt;/vue-slider-native&gt;</pre>
+				</vue-code-highlight>
 			</div>
 		</div>
 
 		<div class="row">
 			<div class="column">
-				<h2>TODO: examples of useful combinations of options</h2>
+				<h2>More examples</h2>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="column">
+				<h2>TODO: Center mode</h2>
 			</div>
 		</div>
 
@@ -118,6 +141,30 @@ export default {
 					moveOnClick: true,
 					preactivatedItem: 5,
 					centerMode: true,
+					sticky: true
+				}"
+			>
+				<template v-slot:prevArrow>
+					Předchozí
+				</template>
+				<template v-slot:nextArrow>
+					Další
+				</template>
+			</VueSliderNative>
+		</div>
+
+		<div class="row">
+			<div class="column">
+				<h2>TODO: Full width mode</h2>
+			</div>
+		</div>
+
+		<div class="scroller">
+			<VueSliderNative
+				scroller-id="scroller3"
+				:component="AppItem"
+				:items="items"
+				:options="{
 					sticky: true
 				}"
 			>

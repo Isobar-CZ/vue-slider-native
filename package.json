@@ -5,8 +5,8 @@
  "source": "src/index.vue",
  "main": "dist/index.js",
  "scripts": {
-  "dev": "cd demo && yarn run serve",
-  "build-demo": "cd demo && yarn run build",
+  "dev": "cd docs-src && yarn run serve",
+  "build-demo": "cd docs-src && yarn run build",
   "build": "rollup -c"
  },
  "keywords": [],

@@ -89,7 +89,17 @@ export default {
 		<div class="row">
 			<div class="column">
 				<h2>Callbacks</h2>
-				<p>TODO: describe activeItemUpdated(activeItem)</p>
+				<h3>activeItemUpdated(activeItem)</h3>
+				<p>
+					&lt;VueSliderNative @activeItemUpdated="doSomeAction(activeItem)"&gt;
+				</p>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="column">
+				<h2>Customizing & translating arrows</h2>
+				<p>Custom arrows with &lt;template v-slot:prevArrow /&gt; and &lt;template v-slot:nextArrow /&gt;</p>
 			</div>
 		</div>
 
@@ -97,6 +107,27 @@ export default {
 			<div class="column">
 				<h2>TODO: examples of useful combinations of options</h2>
 			</div>
+		</div>
+
+		<div class="scroller">
+			<VueSliderNative
+				scroller-id="scroller2"
+				:component="AppItem"
+				:items="items"
+				:options="{
+					moveOnClick: true,
+					preactivatedItem: 5,
+					centerMode: true,
+					sticky: true
+				}"
+			>
+				<template v-slot:prevArrow>
+					Předchozí
+				</template>
+				<template v-slot:nextArrow>
+					Další
+				</template>
+			</VueSliderNative>
 		</div>
 	</div>
 </template>

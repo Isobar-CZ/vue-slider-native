@@ -30,7 +30,7 @@
 						class="scroller__arrow scroller__arrow--next svg"
 						@click="arrowNavigation('next')"
 					>
-						<template v-if="!$slots['prevArrow']">
+						<template v-if="!$slots['nextArrow']">
 							<span>Next</span>
 
 							<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -38,7 +38,7 @@
 							</svg>
 						</template>
 
-						<slot v-else name="prevArrow" />
+						<slot v-else name="nextArrow" />
 					</button>
 				</transition>
 			</div>
@@ -162,15 +162,14 @@
 			this.debouncedHandleHorizontalScroll = debounce(this.handleScroll, 50);
 			this.$refs.scroller.addEventListener('scroll', this.debouncedHandleHorizontalScroll);
 
-			const preactivated = this.items.findIndex((item) => item.preactivated);
-			if (preactivated && !this.isResponsiveVersion) {
+			const preactivated = this.options.preactivatedItem;
+			if (preactivated) {
 				/*
 					another setTimeout, but without anything or even with nextTick or updated() it didn't scroll,
 					it just highlighted preactivated item (maybe some problem with vue-scrollto?)
 				*/
 				setTimeout(() => {
-					this.isReady = true;
-					this.moveCarousel(preactivated, 'preactivated');
+					this.moveCarousel(preactivated, 'preactivated', 0);
 				}, 100);
 			}
 		},
@@ -203,8 +202,10 @@
 					const closestValue = xBoundaries.reduce((prev, curr) => (Math.abs(curr) < Math.abs(prev) ? curr : prev));
 					const closestIndex = xBoundaries.indexOf(closestValue);
 
+					console.log(this.computedOptions.sticky);
 					if (this.computedOptions.sticky) {
-						this.moveCarousel(closestIndex);
+						this.movementOrigin = null;
+						this.moveCarousel(closestIndex, 'sticky');
 					} else {
 						this.activeItem = closestIndex;
 					}
@@ -215,8 +216,10 @@
 				}
 			},
 
-			moveCarousel(moveTo, origin) {
+			moveCarousel(moveTo, origin, duration = 150) {
+				// console.log(origin);
 				if (!this.movementOrigin) {
+					// console.log(origin);
 					if (origin === 'item' && !this.computedOptions.moveOnClick) {
 						return;
 					}
@@ -232,14 +235,12 @@
 					let offset;
 
 					if (this.$refs['scroller-row']) {
-						// TODO: scroll to last element seems to be getting higher value than necessary
 						offset = (this.$refs['scroller-row'].offsetLeft * -1) - 20;
 					}
 
-					this.$scrollTo(element, 300, {
+					this.$scrollTo(element, duration, {
 						container: `#${this.scrollerId}`,
 						easing: 'ease-in',
-						duration: 100,
 						offset,
 						x: true,
 						y: false,

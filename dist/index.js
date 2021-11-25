@@ -1,3 +1,4 @@
+/* eslint-disable */
 /*!
   * vue-slider-native v0.0.1
   * (c) 2021 Isobar
@@ -1072,7 +1073,8 @@
 		sticky: false,
 		dots: false,
 		arrows: true,
-		highlightItems: 1
+		highlightItems: 1,
+		preactivatedItem: null
 	};
 
 	var script = {
@@ -1101,7 +1103,7 @@
 			return {
 				debouncedHandleHorizontalScroll: null,
 				movementOrigin: null,
-				activeItem: 0,
+				activeItem: this.options.preactivatedItem ? this.options.preactivatedItem : 0,
 				isOnStart: true,
 				isOnEnd: false,
 				firstMove: true
@@ -1272,7 +1274,7 @@
 	  }
 	}
 
-	var css_248z = ".scroller[data-v-06c857bf] {\n  position: relative;\n  overflow: hidden;\n}\n.scroller__wrapper[data-v-06c857bf] {\n  position: relative;\n}\n.scroller__main[data-v-06c857bf] {\n  -ms-overflow-style: none;\n  scrollbar-width: none;\n  scrollbar-height: none;\n  overflow-x: auto;\n  overflow-y: hidden;\n}\n.scroller__main[data-v-06c857bf]::-webkit-scrollbar {\n  display: none;\n}\n.scroller__content[data-v-06c857bf] {\n  display: flex;\n  flex-wrap: nowrap;\n}\n.scroller__content[data-v-06c857bf]::before, .scroller__content[data-v-06c857bf]::after {\n  display: block;\n  flex: 0 0 0.9375rem;\n  height: 0.9375rem;\n  content: \"\";\n}\n.scroller__arrows[data-v-06c857bf] {\n  display: flex;\n  justify-content: space-between;\n}\n.scroller__arrow[data-v-06c857bf] {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  padding: 0;\n  font-size: 2rem;\n  font-family: inherit;\n  background: none;\n  border: 0;\n  outline: 0;\n  cursor: pointer;\n  transition: all 300ms ease-in-out;\n}\n.scroller__arrow--prev[data-v-06c857bf] {\n  margin-right: auto;\n}\n.scroller__arrow--prev svg[data-v-06c857bf] {\n  margin-right: 0.625rem;\n}\n.scroller__arrow--next[data-v-06c857bf] {\n  margin-left: auto;\n}\n.scroller__arrow--next svg[data-v-06c857bf] {\n  margin-left: 0.625rem;\n}\n.scroller__arrow[data-v-06c857bf]:hover, .scroller__arrow[data-v-06c857bf]:focus {\n  text-shadow: -0.25px -0.25px 0 #262626, 0.25px 0.25px #262626;\n}\n.scroller__dots[data-v-06c857bf] {\n  display: flex;\n  justify-content: center;\n  margin-top: 1.5rem;\n}\n.scroller__dots button[data-v-06c857bf] {\n  flex: 0 0 0.5rem;\n  width: 0.5rem;\n  height: 0.5rem;\n  padding: 0;\n  background: rgba(0, 0, 0, 0.1);\n  border: 0;\n  border-radius: 50%;\n  outline: 0;\n  cursor: pointer;\n  transition: background 300ms ease-in-out;\n}\n.scroller__dots button + button[data-v-06c857bf] {\n  margin-left: 0.625rem;\n}\n.scroller__dots button[data-v-06c857bf]:hover, .scroller__dots button[data-v-06c857bf]:focus {\n  background: #c4c4c4;\n}\n.scroller__dots button.is-active[data-v-06c857bf] {\n  background: black;\n}\n.fade-enter-active[data-v-06c857bf],\n.fade-leave-active[data-v-06c857bf] {\n  transition: opacity 300ms ease-in-out;\n}\n.fade-enter[data-v-06c857bf],\n.fade-leave-to[data-v-06c857bf] {\n  opacity: 0;\n}";
+	var css_248z = ".scroller[data-v-b06475fa] {\n  position: relative;\n  overflow: hidden;\n}\n.scroller__wrapper[data-v-b06475fa] {\n  position: relative;\n}\n.scroller__main[data-v-b06475fa] {\n  -ms-overflow-style: none;\n  scrollbar-width: none;\n  scrollbar-height: none;\n  overflow-x: auto;\n  overflow-y: hidden;\n}\n.scroller__main[data-v-b06475fa]::-webkit-scrollbar {\n  display: none;\n}\n.scroller__content[data-v-b06475fa] {\n  display: flex;\n  flex-wrap: nowrap;\n}\n.scroller__content[data-v-b06475fa]::after {\n  display: block;\n  flex: 0 0 0.9375rem;\n  height: 0.9375rem;\n  content: \"\";\n}\n.scroller__arrows[data-v-b06475fa] {\n  display: flex;\n  justify-content: space-between;\n}\n.scroller__arrow[data-v-b06475fa] {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  padding: 0;\n  font-family: inherit;\n  background: none;\n  border: 0;\n  outline: 0;\n  cursor: pointer;\n  transition: all 300ms ease-in-out;\n}\n.scroller__arrow--prev[data-v-b06475fa] {\n  margin-right: auto;\n}\n.scroller__arrow--prev svg[data-v-b06475fa] {\n  margin-right: 0.625rem;\n}\n.scroller__arrow--next[data-v-b06475fa] {\n  margin-left: auto;\n}\n.scroller__arrow--next svg[data-v-b06475fa] {\n  margin-left: 0.625rem;\n}\n.scroller__arrow[data-v-b06475fa]:hover, .scroller__arrow[data-v-b06475fa]:focus {\n  color: #00a2ed;\n}\n.scroller__dots[data-v-b06475fa] {\n  display: flex;\n  justify-content: center;\n  margin-top: 1.5rem;\n}\n.scroller__dots button[data-v-b06475fa] {\n  flex: 0 0 0.5rem;\n  width: 0.5rem;\n  height: 0.5rem;\n  padding: 0;\n  background: rgba(0, 0, 0, 0.1);\n  border: 0;\n  border-radius: 50%;\n  outline: 0;\n  cursor: pointer;\n  transition: background 300ms ease-in-out;\n}\n.scroller__dots button + button[data-v-b06475fa] {\n  margin-left: 0.625rem;\n}\n.scroller__dots button[data-v-b06475fa]:hover, .scroller__dots button[data-v-b06475fa]:focus {\n  background: rgba(0, 162, 237, 0.5);\n}\n.scroller__dots button.is-active[data-v-b06475fa] {\n  background: #00a2ed;\n}\n.fade-enter-active[data-v-b06475fa],\n.fade-leave-active[data-v-b06475fa] {\n  transition: opacity 300ms ease-in-out;\n}\n.fade-enter[data-v-b06475fa],\n.fade-leave-to[data-v-b06475fa] {\n  opacity: 0;\n}";
 	styleInject(css_248z);
 
 	function normalizeComponent(template, style, script, scopeId, isFunctionalTemplate, moduleIdentifier /* server only */, shadowMode, createInjector, createInjectorSSR, createInjectorShadow) {
@@ -1440,7 +1442,7 @@
 	                                _c("path", {
 	                                  attrs: {
 	                                    d: "M15.41 16.58L10.83 12L15.41 7.41L14 6L8 12L14 18L15.41 16.58Z",
-	                                    fill: "black",
+	                                    fill: "currentColor",
 	                                  },
 	                                }),
 	                              ]
@@ -1493,7 +1495,7 @@
 	                                _c("path", {
 	                                  attrs: {
 	                                    d: "M8.58984 16.58L13.1698 12L8.58984 7.41L9.99984 6L15.9998 12L9.99984 18L8.58984 16.58Z",
-	                                    fill: "black",
+	                                    fill: "currentColor",
 	                                  },
 	                                }),
 	                              ]
@@ -1594,19 +1596,19 @@
 	  /* style */
 	  const __vue_inject_styles__ = undefined;
 	  /* scoped */
-	  const __vue_scope_id__ = "data-v-06c857bf";
+	  const __vue_scope_id__ = "data-v-b06475fa";
 	  /* module identifier */
 	  const __vue_module_identifier__ = undefined;
 	  /* functional template */
 	  const __vue_is_functional_template__ = false;
 	  /* style inject */
-	  
-	  /* style inject SSR */
-	  
-	  /* style inject shadow dom */
-	  
 
-	  
+	  /* style inject SSR */
+
+	  /* style inject shadow dom */
+
+
+
 	  const __vue_component__ = /*#__PURE__*/normalizeComponent(
 	    { render: __vue_render__, staticRenderFns: __vue_staticRenderFns__ },
 	    __vue_inject_styles__,

@@ -1,9 +1,6 @@
 # vue-slider-native
-
 Let your visitors scroll freely through your products or other items with native scroll.
 No translateX and emulating native behavior of scrolling. With support of dots and arrows.
-
-___
 
 ## Demo
 See examples of usage and docs [here](https://isobar-cz.github.io/vue-slider-native/).
@@ -51,7 +48,7 @@ export default {
 | preactivatedItem<br>_number_ 	| null    	| If you don't want to start at the beginning, set index of first item here.                                                                          	|
 
 ## Customize arrows
-In case you need to change default arrows you can do so with &lt;template v-slot:prevArrow /&rt; and &lt;template v-slot:nextArrow /&rt;
+In case you need to change default arrows you can do so with &lt;template v-slot:prevArrow /&gt; and &lt;template v-slot:nextArrow /&gt;
 <br>In these slots you can style and change label in any way you want.
 ```html
 <vue-slider-native>
@@ -70,4 +67,7 @@ If you need to do some action with item that is currently highlighted, you can d
 <VueSliderNative @activeItemUpdated="doSomeAction(activeItemIndex)" />
 ```
 
-## Happy coding!
+## TODOs:
+- add vertical mode
+- describe responsive mode in README.md
+- fine-tune center mode 

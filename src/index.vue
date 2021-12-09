@@ -1,11 +1,16 @@
 <template>
 	<div
 		class="scroller"
+		:class="{'scroller--no-overflow': !computedOptions.visibleOverflow}"
 		@keydown.left="arrowNavigation('prev')"
 		@keydown.right="arrowNavigation('next')"
 	>
 		<div class="scroller__wrapper">
-			<div v-if="computedOptions.arrows" class="scroller__arrows row">
+			<div
+				v-if="computedOptions.arrows"
+				class="scroller__arrows"
+				:style="{maxWidth: computedOptions.containerMaxWidth}"
+			>
 				<transition name="fade">
 					<button
 						v-show="!isOnStart"
@@ -50,7 +55,8 @@
 			>
 				<div
 					ref="scroller-row"
-					class="scroller__content row"
+					class="scroller__content"
+					:style="{maxWidth: computedOptions.containerMaxWidth}"
 				>
 					<component
 						:is="component"
@@ -62,7 +68,7 @@
 						:class="{
 							'is-active': (index === activeItem) || (index > activeItem && index < activeItem + computedOptions.highlightItems),
 							'is-prev': index < activeItem,
-							'is-next': index > activeItem + computedOptions.highlightItems
+							'is-next': index >= activeItem + computedOptions.highlightItems
 						}"
 						@click.native="moveCarousel(index, 'item')"
 					/>
@@ -98,13 +104,16 @@
 	Vue.use(VueScrollTo);
 
 	const defaultOptions = {
+		containerMaxWidth: '1200px',
+		visibleOverflow: true,
 		moveOnClick: true,
 		centerMode: false,
 		sticky: false,
 		dots: false,
 		arrows: true,
 		highlightItems: 1,
-		preactivatedItem: null
+		preactivatedItem: null,
+		responsive: null
 	};
 
 	export default {
@@ -136,19 +145,46 @@
 				activeItem: this.options.preactivatedItem ? this.options.preactivatedItem : 0,
 				isOnStart: true,
 				isOnEnd: false,
-				firstMove: true
+				firstMove: true,
+				windowWidth: null
 			};
 		},
 
 		computed: {
 			computedOptions() {
+				if (this.optionsBreakpoint && this.options.responsive) {
+					return {
+						...defaultOptions,
+						...this.options.responsive[`${this.optionsBreakpoint}px`]
+					}
+				}
+
 				return {
 					...defaultOptions,
 					...this.options
 				};
 			},
+
 			itemCount() {
 				return this.items.length;
+			},
+
+			optionsBreakpoint() {
+				if (this.options.responsive) {
+					const breakpoints = Object.keys(this.options.responsive);
+
+					let closest = [];
+					breakpoints.some((breakpoint) => {
+						if (parseInt(breakpoint, 10) >= this.windowWidth) {
+							closest.push(parseInt(breakpoint, 10));
+						}
+					});
+
+					closest = Math.min(...closest);
+
+					return closest === Infinity ? null : closest;
+				}
+				return null;
 			}
 		},
 
@@ -172,10 +208,13 @@
 					this.moveCarousel(preactivated, 'preactivated', 0);
 				}, 100);
 			}
+
+			window.addEventListener('resize', this.storeWindowWidth);
 		},
 
 		beforeDestroy() {
 			this.$refs.scroller.removeEventListener('scroll', this.debouncedHandleHorizontalScroll);
+			window.removeEventListener('resize', this.storeWindowWidth);
 		},
 
 		methods: {
@@ -188,13 +227,16 @@
 
 			handleScroll() {
 				if (!this.movementOrigin && this.$refs['scroller-row']) {
-					this.movementOrigin = 'scroll';
-					const row = this.$refs['scroller-row'];
-					const carouselItems = this.getScrollerHtmlElements();
 					let xBoundaries;
 
-					if (this.computedOptions.centerMode && !this.isResponsiveVersion) {
-						xBoundaries = carouselItems.map((element) => (row.offsetWidth / 2) - (carouselItems[0].offsetWidth / 2) - element.getBoundingClientRect().x);
+					this.movementOrigin = 'scroll';
+					const carouselItems = this.getScrollerHtmlElements();
+					const itemWidth = carouselItems[0].offsetWidth;
+					const allItemsWidth = carouselItems.length * itemWidth;
+					const row = this.$refs['scroller-row'];
+
+					if (this.computedOptions.centerMode) {
+						xBoundaries = carouselItems.map((element) => (row.offsetWidth / 2) - (itemWidth / 2) - element.getBoundingClientRect().x);
 					} else {
 						xBoundaries = carouselItems.map((element) => row.offsetLeft - element.getBoundingClientRect().x);
 					}
@@ -202,7 +244,6 @@
 					const closestValue = xBoundaries.reduce((prev, curr) => (Math.abs(curr) < Math.abs(prev) ? curr : prev));
 					const closestIndex = xBoundaries.indexOf(closestValue);
 
-					console.log(this.computedOptions.sticky);
 					if (this.computedOptions.sticky) {
 						this.movementOrigin = null;
 						this.moveCarousel(closestIndex, 'sticky');
@@ -217,13 +258,12 @@
 			},
 
 			moveCarousel(moveTo, origin, duration = 150) {
-				// console.log(origin);
 				if (!this.movementOrigin) {
-					// console.log(origin);
 					if (origin === 'item' && !this.computedOptions.moveOnClick) {
 						return;
 					}
-					// const direction = moveTo > this.activeItem ? 'right' : 'left';
+
+					const direction = moveTo > this.activeItem ? 'right' : 'left';
 
 					this.movementOrigin = origin;
 					this.activeItem = moveTo;
@@ -231,11 +271,22 @@
 					this.activeItem = this.activeItem < 0 ? 0 : this.activeItem;
 
 					const element = `#${this.scrollerId}-${this.activeItem}`;
-
 					let offset;
 
-					if (this.$refs['scroller-row']) {
-						offset = (this.$refs['scroller-row'].offsetLeft * -1) - 20;
+					if (this.options.centerMode) {
+						const halfItemWidth = this.getScrollerHtmlElements()[0].offsetWidth / 2;
+
+						if (this.firstMove) {
+							offset = (this.$refs.scroller.offsetWidth / 2) * -1 + halfItemWidth;
+							this.firstMove = false;
+						} else if (direction === 'left') {
+							offset = (this.$refs.scroller.offsetWidth / 2) * -1 + halfItemWidth;
+						} else {
+							offset = (this.$refs.scroller.offsetWidth / 2) * -1 + halfItemWidth;
+						}
+					} else if (this.$refs['scroller-row']) {
+						// TODO: scroll to last element seems to be geeting higher value than necessary
+						offset = (this.$refs['scroller-row'].offsetLeft * -1);
 					}
 
 					this.$scrollTo(element, duration, {
@@ -274,6 +325,10 @@
 
 			getScrollerHtmlElements() {
 				return [...this.$refs['scroller-row'].children].filter((child) => child.className.includes('scroller__item'));
+			},
+
+			storeWindowWidth() {
+				this.windowWidth = document.documentElement.clientWidth;
 			}
 		}
 	};
@@ -301,14 +356,7 @@
 		&__content {
 			display: flex;
 			flex-wrap: nowrap;
-
-			// emulate padding-right for last element in scroller
-			&::after {
-				display: block;
-				flex: 0 0 rem(15);
-				height: rem(15);
-				content: '';
-			}
+			margin: 0 auto;
 		}
 
 		&__arrows {
@@ -379,6 +427,12 @@
 				&.is-active {
 					background: $color-active;
 				}
+			}
+		}
+
+		&--no-overflow {
+			#{$this}__content {
+				overflow: hidden;
 			}
 		}
 	}

@@ -165,16 +165,9 @@ export default {
 				:component="AppItem"
 				:items="items"
 				:options="{
+					visibleOverflow: false,
 					sticky: true
-				}"
-			>
-				<template v-slot:prevArrow>
-					Předchozí
-				</template>
-				<template v-slot:nextArrow>
-					Další
-				</template>
-			</VueSliderNative>
+				}" />
 		</div>
 	</div>
 </template>
@@ -310,6 +303,11 @@ export default {
 		max-width: rem(1200);
 		margin: 0 auto;
 		padding: 0 rem(15);
+
+		.row {
+			padding-right: 0;
+			padding-left: 0;
+		}
 	}
 
 	.column {
@@ -319,6 +317,10 @@ export default {
 
 	.scroller .column {
 		flex: 0 0 25%;
+	}
+
+	#scroller3 .column {
+		flex: 0 0 100%;
 	}
 
 	table {

@@ -146,7 +146,7 @@
 				isOnStart: true,
 				isOnEnd: false,
 				firstMove: true,
-				windowWidth: null
+				windowWidth: document.documentElement.clientWidth
 			};
 		},
 
@@ -341,6 +341,7 @@
 		$this: &;
 
 		position: relative;
+		max-width: 100%;
 		overflow: hidden;
 
 		&__wrapper {

@@ -17,7 +17,7 @@ In template
 ```
 In JS
 ```js
-import VueSliderNative from 'VueSliderNative';
+import {VueSliderNative} from 'vue-slider-native';
 import AppItem from '@/components/Item'; // any component you want to loop
 
 export default {

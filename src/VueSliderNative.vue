@@ -362,6 +362,7 @@
 		&__arrows {
 			display: flex;
 			justify-content: space-between;
+			margin: auto;
 		}
 
 		&__arrow {

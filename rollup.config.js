@@ -7,7 +7,7 @@ import postcss from 'rollup-plugin-postcss'
 import {version} from './package.json'
 
 export default {
-    input: './src/index.vue',
+    input: './src/index.js',
     output: {
         file: 'dist/index.js',
         name: 'vue-slider-native',

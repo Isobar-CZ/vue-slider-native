@@ -38,7 +38,7 @@
 				<p>In JS</p>
 				<vue-code-highlight language="javascript">
 					<pre>
-import VueSliderNative from 'VueSliderNative';
+import {VueSliderNative} from 'VueSliderNative';
 import AppItem from '@/components/Item'; // any component you want to loop
 
 export default {
@@ -160,21 +160,21 @@ export default {
 		</div>
 
 		<div class="scroller">
-			<VueSliderNative
+			<!--<VueSliderNative
 				scroller-id="scroller3"
 				:component="AppItem"
 				:items="items"
 				:options="{
 					visibleOverflow: false,
 					sticky: true
-				}" />
+				}" />-->
 		</div>
 	</div>
 </template>
 
 <script>
 	// eslint-disable-next-line
-	import VueSliderNative from './../../src/index.vue';
+	import VueSliderNative from './../../src/VueSliderNative.vue';
 	import AppItem from './components/Item.vue';
 	import VueCodeHighlight from 'vue-code-highlight/src/CodeHighlight.vue';
 	import 'vue-code-highlight/themes/duotone-sea.css';

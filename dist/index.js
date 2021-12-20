@@ -1,14 +1,13 @@
-/* eslint-disable */
 /*!
-  * vue-slider-native v0.0.1
+  * vue-slider-native v0.0.3
   * (c) 2021 Isobar
   * @license ISC
   */
 (function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('vue')) :
-	typeof define === 'function' && define.amd ? define(['vue'], factory) :
-	(global = typeof globalThis !== 'undefined' ? globalThis : global || self, global["vue-slider-native"] = factory(global.vue));
-})(this, (function (Vue) { 'use strict';
+	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('vue')) :
+	typeof define === 'function' && define.amd ? define(['exports', 'vue'], factory) :
+	(global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global["vue-slider-native"] = {}, global.vue));
+})(this, (function (exports, Vue) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
@@ -1068,13 +1067,16 @@
 	Vue__default["default"].use(VueScrollTo);
 
 	const defaultOptions = {
+		containerMaxWidth: '1200px',
+		visibleOverflow: true,
 		moveOnClick: true,
 		centerMode: false,
 		sticky: false,
 		dots: false,
 		arrows: true,
 		highlightItems: 1,
-		preactivatedItem: null
+		preactivatedItem: null,
+		responsive: null
 	};
 
 	var script = {
@@ -1106,19 +1108,46 @@
 				activeItem: this.options.preactivatedItem ? this.options.preactivatedItem : 0,
 				isOnStart: true,
 				isOnEnd: false,
-				firstMove: true
+				firstMove: true,
+				windowWidth: null
 			};
 		},
 
 		computed: {
 			computedOptions() {
+				if (this.optionsBreakpoint && this.options.responsive) {
+					return {
+						...defaultOptions,
+						...this.options.responsive[`${this.optionsBreakpoint}px`]
+					}
+				}
+
 				return {
 					...defaultOptions,
 					...this.options
 				};
 			},
+
 			itemCount() {
 				return this.items.length;
+			},
+
+			optionsBreakpoint() {
+				if (this.options.responsive) {
+					const breakpoints = Object.keys(this.options.responsive);
+
+					let closest = [];
+					breakpoints.some((breakpoint) => {
+						if (parseInt(breakpoint, 10) >= this.windowWidth) {
+							closest.push(parseInt(breakpoint, 10));
+						}
+					});
+
+					closest = Math.min(...closest);
+
+					return closest === Infinity ? null : closest;
+				}
+				return null;
 			}
 		},
 
@@ -1132,21 +1161,23 @@
 			this.debouncedHandleHorizontalScroll = debounce(this.handleScroll, 50);
 			this.$refs.scroller.addEventListener('scroll', this.debouncedHandleHorizontalScroll);
 
-			const preactivated = this.items.findIndex((item) => item.preactivated);
-			if (preactivated && !this.isResponsiveVersion) {
+			const preactivated = this.options.preactivatedItem;
+			if (preactivated) {
 				/*
 					another setTimeout, but without anything or even with nextTick or updated() it didn't scroll,
 					it just highlighted preactivated item (maybe some problem with vue-scrollto?)
 				*/
 				setTimeout(() => {
-					this.isReady = true;
-					this.moveCarousel(preactivated, 'preactivated');
+					this.moveCarousel(preactivated, 'preactivated', 0);
 				}, 100);
 			}
+
+			window.addEventListener('resize', this.storeWindowWidth);
 		},
 
 		beforeDestroy() {
 			this.$refs.scroller.removeEventListener('scroll', this.debouncedHandleHorizontalScroll);
+			window.removeEventListener('resize', this.storeWindowWidth);
 		},
 
 		methods: {
@@ -1159,13 +1190,16 @@
 
 			handleScroll() {
 				if (!this.movementOrigin && this.$refs['scroller-row']) {
-					this.movementOrigin = 'scroll';
-					const row = this.$refs['scroller-row'];
-					const carouselItems = this.getScrollerHtmlElements();
 					let xBoundaries;
 
-					if (this.computedOptions.centerMode && !this.isResponsiveVersion) {
-						xBoundaries = carouselItems.map((element) => (row.offsetWidth / 2) - (carouselItems[0].offsetWidth / 2) - element.getBoundingClientRect().x);
+					this.movementOrigin = 'scroll';
+					const carouselItems = this.getScrollerHtmlElements();
+					const itemWidth = carouselItems[0].offsetWidth;
+					carouselItems.length * itemWidth;
+					const row = this.$refs['scroller-row'];
+
+					if (this.computedOptions.centerMode) {
+						xBoundaries = carouselItems.map((element) => (row.offsetWidth / 2) - (itemWidth / 2) - element.getBoundingClientRect().x);
 					} else {
 						xBoundaries = carouselItems.map((element) => row.offsetLeft - element.getBoundingClientRect().x);
 					}
@@ -1174,7 +1208,8 @@
 					const closestIndex = xBoundaries.indexOf(closestValue);
 
 					if (this.computedOptions.sticky) {
-						this.moveCarousel(closestIndex);
+						this.movementOrigin = null;
+						this.moveCarousel(closestIndex, 'sticky');
 					} else {
 						this.activeItem = closestIndex;
 					}
@@ -1185,12 +1220,13 @@
 				}
 			},
 
-			moveCarousel(moveTo, origin) {
+			moveCarousel(moveTo, origin, duration = 150) {
 				if (!this.movementOrigin) {
 					if (origin === 'item' && !this.computedOptions.moveOnClick) {
 						return;
 					}
-					// const direction = moveTo > this.activeItem ? 'right' : 'left';
+
+					const direction = moveTo > this.activeItem ? 'right' : 'left';
 
 					this.movementOrigin = origin;
 					this.activeItem = moveTo;
@@ -1198,18 +1234,27 @@
 					this.activeItem = this.activeItem < 0 ? 0 : this.activeItem;
 
 					const element = `#${this.scrollerId}-${this.activeItem}`;
-
 					let offset;
 
-					if (this.$refs['scroller-row']) {
-						// TODO: scroll to last element seems to be getting higher value than necessary
-						offset = (this.$refs['scroller-row'].offsetLeft * -1) - 20;
+					if (this.options.centerMode) {
+						const halfItemWidth = this.getScrollerHtmlElements()[0].offsetWidth / 2;
+
+						if (this.firstMove) {
+							offset = (this.$refs.scroller.offsetWidth / 2) * -1 + halfItemWidth;
+							this.firstMove = false;
+						} else if (direction === 'left') {
+							offset = (this.$refs.scroller.offsetWidth / 2) * -1 + halfItemWidth;
+						} else {
+							offset = (this.$refs.scroller.offsetWidth / 2) * -1 + halfItemWidth;
+						}
+					} else if (this.$refs['scroller-row']) {
+						// TODO: scroll to last element seems to be geeting higher value than necessary
+						offset = (this.$refs['scroller-row'].offsetLeft * -1);
 					}
 
-					this.$scrollTo(element, 300, {
+					this.$scrollTo(element, duration, {
 						container: `#${this.scrollerId}`,
 						easing: 'ease-in',
-						duration: 100,
 						offset,
 						x: true,
 						y: false,
@@ -1243,6 +1288,10 @@
 
 			getScrollerHtmlElements() {
 				return [...this.$refs['scroller-row'].children].filter((child) => child.className.includes('scroller__item'));
+			},
+
+			storeWindowWidth() {
+				this.windowWidth = document.documentElement.clientWidth;
 			}
 		}
 	};
@@ -1274,7 +1323,7 @@
 	  }
 	}
 
-	var css_248z = ".scroller[data-v-b06475fa] {\n  position: relative;\n  overflow: hidden;\n}\n.scroller__wrapper[data-v-b06475fa] {\n  position: relative;\n}\n.scroller__main[data-v-b06475fa] {\n  -ms-overflow-style: none;\n  scrollbar-width: none;\n  scrollbar-height: none;\n  overflow-x: auto;\n  overflow-y: hidden;\n}\n.scroller__main[data-v-b06475fa]::-webkit-scrollbar {\n  display: none;\n}\n.scroller__content[data-v-b06475fa] {\n  display: flex;\n  flex-wrap: nowrap;\n}\n.scroller__content[data-v-b06475fa]::after {\n  display: block;\n  flex: 0 0 0.9375rem;\n  height: 0.9375rem;\n  content: \"\";\n}\n.scroller__arrows[data-v-b06475fa] {\n  display: flex;\n  justify-content: space-between;\n}\n.scroller__arrow[data-v-b06475fa] {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  padding: 0;\n  font-family: inherit;\n  background: none;\n  border: 0;\n  outline: 0;\n  cursor: pointer;\n  transition: all 300ms ease-in-out;\n}\n.scroller__arrow--prev[data-v-b06475fa] {\n  margin-right: auto;\n}\n.scroller__arrow--prev svg[data-v-b06475fa] {\n  margin-right: 0.625rem;\n}\n.scroller__arrow--next[data-v-b06475fa] {\n  margin-left: auto;\n}\n.scroller__arrow--next svg[data-v-b06475fa] {\n  margin-left: 0.625rem;\n}\n.scroller__arrow[data-v-b06475fa]:hover, .scroller__arrow[data-v-b06475fa]:focus {\n  color: #00a2ed;\n}\n.scroller__dots[data-v-b06475fa] {\n  display: flex;\n  justify-content: center;\n  margin-top: 1.5rem;\n}\n.scroller__dots button[data-v-b06475fa] {\n  flex: 0 0 0.5rem;\n  width: 0.5rem;\n  height: 0.5rem;\n  padding: 0;\n  background: rgba(0, 0, 0, 0.1);\n  border: 0;\n  border-radius: 50%;\n  outline: 0;\n  cursor: pointer;\n  transition: background 300ms ease-in-out;\n}\n.scroller__dots button + button[data-v-b06475fa] {\n  margin-left: 0.625rem;\n}\n.scroller__dots button[data-v-b06475fa]:hover, .scroller__dots button[data-v-b06475fa]:focus {\n  background: rgba(0, 162, 237, 0.5);\n}\n.scroller__dots button.is-active[data-v-b06475fa] {\n  background: #00a2ed;\n}\n.fade-enter-active[data-v-b06475fa],\n.fade-leave-active[data-v-b06475fa] {\n  transition: opacity 300ms ease-in-out;\n}\n.fade-enter[data-v-b06475fa],\n.fade-leave-to[data-v-b06475fa] {\n  opacity: 0;\n}";
+	var css_248z = ".scroller[data-v-50380087] {\n  position: relative;\n  overflow: hidden;\n}\n.scroller__wrapper[data-v-50380087] {\n  position: relative;\n}\n.scroller__main[data-v-50380087] {\n  -ms-overflow-style: none;\n  scrollbar-width: none;\n  scrollbar-height: none;\n  overflow-x: auto;\n  overflow-y: hidden;\n}\n.scroller__main[data-v-50380087]::-webkit-scrollbar {\n  display: none;\n}\n.scroller__content[data-v-50380087] {\n  display: flex;\n  flex-wrap: nowrap;\n  margin: 0 auto;\n}\n.scroller__arrows[data-v-50380087] {\n  display: flex;\n  justify-content: space-between;\n  margin: auto;\n}\n.scroller__arrow[data-v-50380087] {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  padding: 0;\n  font-family: inherit;\n  background: none;\n  border: 0;\n  outline: 0;\n  cursor: pointer;\n  transition: all 300ms ease-in-out;\n}\n.scroller__arrow--prev[data-v-50380087] {\n  margin-right: auto;\n}\n.scroller__arrow--prev svg[data-v-50380087] {\n  margin-right: 0.625rem;\n}\n.scroller__arrow--next[data-v-50380087] {\n  margin-left: auto;\n}\n.scroller__arrow--next svg[data-v-50380087] {\n  margin-left: 0.625rem;\n}\n.scroller__arrow[data-v-50380087]:hover, .scroller__arrow[data-v-50380087]:focus {\n  color: #00a2ed;\n}\n.scroller__dots[data-v-50380087] {\n  display: flex;\n  justify-content: center;\n  margin-top: 1.5rem;\n}\n.scroller__dots button[data-v-50380087] {\n  flex: 0 0 0.5rem;\n  width: 0.5rem;\n  height: 0.5rem;\n  padding: 0;\n  background: rgba(0, 0, 0, 0.1);\n  border: 0;\n  border-radius: 50%;\n  outline: 0;\n  cursor: pointer;\n  transition: background 300ms ease-in-out;\n}\n.scroller__dots button + button[data-v-50380087] {\n  margin-left: 0.625rem;\n}\n.scroller__dots button[data-v-50380087]:hover, .scroller__dots button[data-v-50380087]:focus {\n  background: rgba(0, 162, 237, 0.5);\n}\n.scroller__dots button.is-active[data-v-50380087] {\n  background: #00a2ed;\n}\n.scroller--no-overflow .scroller__content[data-v-50380087] {\n  overflow: hidden;\n}\n.fade-enter-active[data-v-50380087],\n.fade-leave-active[data-v-50380087] {\n  transition: opacity 300ms ease-in-out;\n}\n.fade-enter[data-v-50380087],\n.fade-leave-to[data-v-50380087] {\n  opacity: 0;\n}";
 	styleInject(css_248z);
 
 	function normalizeComponent(template, style, script, scopeId, isFunctionalTemplate, moduleIdentifier /* server only */, shadowMode, createInjector, createInjectorSSR, createInjectorShadow) {
@@ -1363,6 +1412,7 @@
 	    "div",
 	    {
 	      staticClass: "scroller",
+	      class: { "scroller--no-overflow": !_vm.computedOptions.visibleOverflow },
 	      on: {
 	        keydown: [
 	          function ($event) {
@@ -1403,7 +1453,10 @@
 	        _vm.computedOptions.arrows
 	          ? _c(
 	              "div",
-	              { staticClass: "scroller__arrows row" },
+	              {
+	                staticClass: "scroller__arrows",
+	                style: { maxWidth: _vm.computedOptions.containerMaxWidth },
+	              },
 	              [
 	                _c("transition", { attrs: { name: "fade" } }, [
 	                  _c(
@@ -1476,7 +1529,7 @@
 	                      },
 	                    },
 	                    [
-	                      !_vm.$slots["prevArrow"]
+	                      !_vm.$slots["nextArrow"]
 	                        ? [
 	                            _c("span", [_vm._v("Next")]),
 	                            _vm._v(" "),
@@ -1501,7 +1554,7 @@
 	                              ]
 	                            ),
 	                          ]
-	                        : _vm._t("prevArrow"),
+	                        : _vm._t("nextArrow"),
 	                    ],
 	                    2
 	                  ),
@@ -1521,7 +1574,11 @@
 	          [
 	            _c(
 	              "div",
-	              { ref: "scroller-row", staticClass: "scroller__content row" },
+	              {
+	                ref: "scroller-row",
+	                staticClass: "scroller__content",
+	                style: { maxWidth: _vm.computedOptions.containerMaxWidth },
+	              },
 	              [
 	                _vm._l(_vm.items, function (item, index) {
 	                  return _c(_vm.component, {
@@ -1537,7 +1594,7 @@
 	                              _vm.computedOptions.highlightItems),
 	                      "is-prev": index < _vm.activeItem,
 	                      "is-next":
-	                        index >
+	                        index >=
 	                        _vm.activeItem + _vm.computedOptions.highlightItems,
 	                    },
 	                    attrs: { id: _vm.scrollerId + "-" + index, item: item },
@@ -1596,19 +1653,19 @@
 	  /* style */
 	  const __vue_inject_styles__ = undefined;
 	  /* scoped */
-	  const __vue_scope_id__ = "data-v-b06475fa";
+	  const __vue_scope_id__ = "data-v-50380087";
 	  /* module identifier */
 	  const __vue_module_identifier__ = undefined;
 	  /* functional template */
 	  const __vue_is_functional_template__ = false;
 	  /* style inject */
-
+	  
 	  /* style inject SSR */
-
+	  
 	  /* style inject shadow dom */
+	  
 
-
-
+	  
 	  const __vue_component__ = /*#__PURE__*/normalizeComponent(
 	    { render: __vue_render__, staticRenderFns: __vue_staticRenderFns__ },
 	    __vue_inject_styles__,
@@ -1622,6 +1679,8 @@
 	    undefined
 	  );
 
-	return __vue_component__;
+	exports.VueSliderNative = __vue_component__;
+
+	Object.defineProperty(exports, '__esModule', { value: true });
 
 }));

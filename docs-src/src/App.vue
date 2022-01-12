@@ -12,7 +12,7 @@
 		</div>
 
 		<div class="scroller">
-			<VueSliderNative
+			<vue-slider-native
 				scroller-id="scroller"
 				:component="AppItem"
 				:items="items"
@@ -50,7 +50,14 @@ export default {
 			AppItem,
 			items: [], // array of your items
 			options: { // see all possible options below
-				arrows: true
+				arrows: true,
+				dots: false,
+				responsive: {
+					'900px': {
+						arrows: false,
+						dots: true
+					}
+				}
 			}
 		};
 	}
@@ -93,7 +100,7 @@ export default {
 				<h2>Callbacks</h2>
 				<h3>activeItemUpdated(activeItem)</h3>
 				<p>
-					&lt;VueSliderNative @activeItemUpdated="doSomeAction(activeItemIndex)"&gt;
+					&lt;vue-slider-native @activeItemUpdated="doSomeAction(activeItemIndex)"&gt;
 				</p>
 			</div>
 		</div>
@@ -128,12 +135,12 @@ export default {
 
 		<div class="row">
 			<div class="column">
-				<h2>TODO: Center mode</h2>
+				<h2>Center mode</h2>
 			</div>
 		</div>
 
 		<div class="scroller">
-			<VueSliderNative
+			<vue-slider-native
 				scroller-id="scroller2"
 				:component="AppItem"
 				:items="items"
@@ -150,25 +157,25 @@ export default {
 				<template v-slot:nextArrow>
 					Další
 				</template>
-			</VueSliderNative>
+			</vue-slider-native>
 		</div>
 
-		<div class="row">
+		<!--<div class="row">
 			<div class="column">
 				<h2>TODO: Full width mode</h2>
 			</div>
 		</div>
 
 		<div class="scroller">
-			<!--<VueSliderNative
+			<VueSliderNative
 				scroller-id="scroller3"
 				:component="AppItem"
 				:items="items"
 				:options="{
 					visibleOverflow: false,
 					sticky: true
-				}" />-->
-		</div>
+				}" />
+		</div>-->
 	</div>
 </template>
 
@@ -250,6 +257,12 @@ export default {
 						description: 'Define whether the click on one item should become highlighted and move to active position.'
 					},
 					{
+						name: 'duration',
+						type: 'number',
+						default: 250,
+						description: 'Determine duration of scroll to element in milliseconds.'
+					},
+					{
 						name: 'centerMode',
 						type: 'boolean',
 						default: false,
@@ -282,8 +295,14 @@ export default {
 					{
 						name: 'preactivatedItem',
 						type: 'number',
-						default: null,
+						default: 'null',
 						description: `If you don't want to start at the beginning, set index of first item here.`
+					},
+					{
+						name: 'responsive',
+						type: 'object',
+						default: 'null',
+						description: `Redefine options for responsiveness. As keys use values such as '900px'. From that key all new options will be applied downwards.`
 					}
 				]
 			};
@@ -293,6 +312,10 @@ export default {
 
 <style lang="scss">
 	@import '../../src/assets/mixins';
+
+	* {
+		box-sizing: border-box;
+	}
 
 	body {
 		font: 16px/1.4 Arial;
@@ -312,15 +335,28 @@ export default {
 
 	.column {
 		flex: 1;
-		padding: 0 15px;
+		padding: 0 rem(15);
+	}
+
+	.scroller__arrows,
+	.scroller__content {
+		padding: 0 rem(15);
 	}
 
 	.scroller .column {
 		flex: 0 0 25%;
 	}
 
-	#scroller3 .column {
-		flex: 0 0 100%;
+	#scroller2 {
+		.column.is-active img {
+			filter: saturate(2);
+		}
+	}
+
+	#scroller3 {
+		.column {
+			flex: 0 0 100%;
+		}
 	}
 
 	table {

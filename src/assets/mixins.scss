@@ -1,3 +1,5 @@
+@use 'sass:math';
+
 @mixin hideScrollbar() {
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -9,7 +11,7 @@
 }
 
 @function rem($size) {
-  $remSize: $size / 16;
+  $remSize: math.div($size, 16);
   @return $remSize * 1rem;
 }
 

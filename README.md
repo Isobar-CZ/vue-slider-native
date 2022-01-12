@@ -40,12 +40,14 @@ export default {
 | Option                     	| Default 	| Description                                                                                                                                         	|
 |----------------------------	|---------	|-----------------------------------------------------------------------------------------------------------------------------------------------------	|
 | moveOnClick<br>_boolean_     	| true    	| Define whether the click on one item should become highlighted and move to active position.                                                         	|
+| duration<br>_number_     	    | 250    	| Determine duration of scroll to element in milliseconds.                                                         	                                    |
 | centerMode<br>_boolean_      	| false   	| When turned on, active item will be centered. Best to be combined together with preactivatedItem option to create e.g. nice native scroll timeline. 	|
 | sticky<br>_boolean_          	| false   	| Scroll to closest active item after user finished scrolling horizontally using touchpad on horizontal mouse wheel.                                  	|
 | dots<br>_boolean_            	| false   	| Shows/hides dots. Better to use only if items are wide enough.                                                                                      	|
 | arrows<br>_boolean_          	| true    	| Shows/hides arrows.                                                                                                                                 	|
 | highlightItems<br>_number_   	| 1       	| How many items should be highlighted as active.                                                                                                     	|
 | preactivatedItem<br>_number_ 	| null    	| If you don't want to start at the beginning, set index of first item here.                                                                          	|
+| responsive<br>_object_ 	    | null    	| Redefine options for responsiveness. As keys use values such as '900px'. From that key all new options will be applied downwards.                      |
 
 ## Customize arrows
 In case you need to change default arrows you can do so with &lt;template v-slot:prevArrow /&gt; and &lt;template v-slot:nextArrow /&gt;

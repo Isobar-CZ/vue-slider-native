@@ -105,6 +105,7 @@
 
 	const defaultOptions = {
 		containerMaxWidth: '1200px',
+		duration: 250,
 		visibleOverflow: true,
 		moveOnClick: true,
 		centerMode: false,
@@ -253,16 +254,18 @@
 
 					this.handleArrows();
 
-					this.movementOrigin = null;
+					setTimeout(() => {
+						this.movementOrigin = null;
+					}, 500);
 				}
 			},
 
-			moveCarousel(moveTo, origin, duration = 150) {
+			moveCarousel(moveTo, origin) {
 				if (!this.movementOrigin) {
-					if (origin === 'item' && !this.computedOptions.moveOnClick) {
+					console.log(this.movementOrigin);
+					if (origin === 'item' && !this.moveOnClick) {
 						return;
 					}
-
 					const direction = moveTo > this.activeItem ? 'right' : 'left';
 
 					this.movementOrigin = origin;
@@ -271,25 +274,17 @@
 					this.activeItem = this.activeItem < 0 ? 0 : this.activeItem;
 
 					const element = `#${this.scrollerId}-${this.activeItem}`;
+
 					let offset;
 
 					if (this.options.centerMode) {
 						const halfItemWidth = this.getScrollerHtmlElements()[0].offsetWidth / 2;
-
-						if (this.firstMove) {
-							offset = (this.$refs.scroller.offsetWidth / 2) * -1 + halfItemWidth;
-							this.firstMove = false;
-						} else if (direction === 'left') {
-							offset = (this.$refs.scroller.offsetWidth / 2) * -1 + halfItemWidth;
-						} else {
-							offset = (this.$refs.scroller.offsetWidth / 2) * -1 + halfItemWidth;
-						}
+						offset = (this.$refs.scroller.offsetWidth / 2) * -1 + halfItemWidth;
 					} else if (this.$refs['scroller-row']) {
-						// TODO: scroll to last element seems to be geeting higher value than necessary
 						offset = (this.$refs['scroller-row'].offsetLeft * -1);
 					}
 
-					this.$scrollTo(element, duration, {
+					this.$scrollTo(element, this.computedOptions.duration, {
 						container: `#${this.scrollerId}`,
 						easing: 'ease-in',
 						offset,

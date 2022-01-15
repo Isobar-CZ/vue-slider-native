@@ -71,5 +71,4 @@ If you need to do some action with item that is currently highlighted, you can d
 
 ## TODOs:
 - add vertical mode
-- describe responsive mode in README.md
 - fine-tune center mode 

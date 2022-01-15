@@ -147,7 +147,7 @@
 				isOnStart: true,
 				isOnEnd: false,
 				firstMove: true,
-				windowWidth: document.documentElement.clientWidth
+				windowWidth: 0
 			};
 		},
 
@@ -196,6 +196,7 @@
 		},
 
 		mounted() {
+			this.windowWidth = document.documentElement.clientWidth;
 			this.debouncedHandleHorizontalScroll = debounce(this.handleScroll, 50);
 			this.$refs.scroller.addEventListener('scroll', this.debouncedHandleHorizontalScroll);
 

@@ -86,9 +86,9 @@
 
 		<div v-if="computedOptions.dots" class="scroller__dots">
 			<button
-				v-for="index in itemCount"
+				v-for="index in Math.ceil(itemCount / computedOptions.itemsToScroll)"
 				:key="index"
-				:class="{'is-active': activeItem === (index - 1)}"
+				:class="{'is-active': isDotActive(index)}"
 				@click="moveCarousel(index - 1, 'dot')"
 			/>
 		</div>
@@ -113,6 +113,7 @@
 		dots: false,
 		arrows: true,
 		highlightItems: 1,
+		itemsToScroll: 1,
 		preactivatedItem: null,
 		responsive: null
 	};
@@ -222,7 +223,7 @@
 		methods: {
 			arrowNavigation(direction) {
 				if (!this.movementOrigin) {
-					const moveTo = direction === 'prev' ? this.activeItem - 1 : this.activeItem + 1;
+					const moveTo = direction === 'prev' ? this.activeItem - this.computedOptions.itemsToScroll : this.activeItem + this.computedOptions.itemsToScroll;
 					this.moveCarousel(moveTo, 'arrows');
 				}
 			},
@@ -263,11 +264,18 @@
 
 			moveCarousel(moveTo, origin) {
 				if (!this.movementOrigin) {
-					console.log(this.movementOrigin);
+					this.$emit('item-clicked', moveTo);
+
+					if (moveTo > this.items.length - 1) {
+						moveTo = this.items.length - 1;
+					} else if (moveTo < 0) {
+						moveTo = 0;
+					}
+
 					if (origin === 'item' && !this.moveOnClick) {
 						return;
 					}
-					const direction = moveTo > this.activeItem ? 'right' : 'left';
+					// const direction = moveTo > this.activeItem ? 'right' : 'left';
 
 					this.movementOrigin = origin;
 					this.activeItem = moveTo;
@@ -325,6 +333,12 @@
 
 			storeWindowWidth() {
 				this.windowWidth = document.documentElement.clientWidth;
+			},
+
+			isDotActive(index) {
+				const minCount = (index - 1) * this.computedOptions.itemsToScroll;
+				const maxCount = (index - 1) * this.computedOptions.itemsToScroll + this.computedOptions.itemsToScroll;
+				return this.activeItem >= minCount && this.activeItem < maxCount;
 			}
 		}
 	};

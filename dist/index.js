@@ -1,5 +1,5 @@
 /*!
-  * vue-slider-native v0.0.8
+  * vue-slider-native v0.0.9
   * (c) 2021 Isobar
   * @license ISC
   */
@@ -1076,6 +1076,7 @@
 		dots: false,
 		arrows: true,
 		highlightItems: 1,
+		itemsToScroll: 1,
 		preactivatedItem: null,
 		responsive: null
 	};
@@ -1185,7 +1186,7 @@
 		methods: {
 			arrowNavigation(direction) {
 				if (!this.movementOrigin) {
-					const moveTo = direction === 'prev' ? this.activeItem - 1 : this.activeItem + 1;
+					const moveTo = direction === 'prev' ? this.activeItem - this.computedOptions.itemsToScroll : this.activeItem + this.computedOptions.itemsToScroll;
 					this.moveCarousel(moveTo, 'arrows');
 				}
 			},
@@ -1226,11 +1227,18 @@
 
 			moveCarousel(moveTo, origin) {
 				if (!this.movementOrigin) {
-					console.log(this.movementOrigin);
+					this.$emit('item-clicked', moveTo);
+
+					if (moveTo > this.items.length - 1) {
+						moveTo = this.items.length - 1;
+					} else if (moveTo < 0) {
+						moveTo = 0;
+					}
+
 					if (origin === 'item' && !this.moveOnClick) {
 						return;
 					}
-					moveTo > this.activeItem ? 'right' : 'left';
+					// const direction = moveTo > this.activeItem ? 'right' : 'left';
 
 					this.movementOrigin = origin;
 					this.activeItem = moveTo;
@@ -1288,6 +1296,12 @@
 
 			storeWindowWidth() {
 				this.windowWidth = document.documentElement.clientWidth;
+			},
+
+			isDotActive(index) {
+				const minCount = (index - 1) * this.computedOptions.itemsToScroll;
+				const maxCount = (index - 1) * this.computedOptions.itemsToScroll + this.computedOptions.itemsToScroll;
+				return this.activeItem >= minCount && this.activeItem < maxCount;
 			}
 		}
 	};
@@ -1319,7 +1333,7 @@
 	  }
 	}
 
-	var css_248z = ".scroller[data-v-231f5b96] {\n  position: relative;\n  max-width: 100%;\n  overflow: hidden;\n}\n.scroller__wrapper[data-v-231f5b96] {\n  position: relative;\n}\n.scroller__main[data-v-231f5b96] {\n  -ms-overflow-style: none;\n  scrollbar-width: none;\n  scrollbar-height: none;\n  overflow-x: auto;\n  overflow-y: hidden;\n}\n.scroller__main[data-v-231f5b96]::-webkit-scrollbar {\n  display: none;\n}\n.scroller__content[data-v-231f5b96] {\n  display: flex;\n  flex-wrap: nowrap;\n  margin: 0 auto;\n}\n.scroller__arrows[data-v-231f5b96] {\n  display: flex;\n  justify-content: space-between;\n  margin: auto;\n}\n.scroller__arrow[data-v-231f5b96] {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  padding: 0;\n  font-family: inherit;\n  background: none;\n  border: 0;\n  outline: 0;\n  cursor: pointer;\n  transition: all 300ms ease-in-out;\n}\n.scroller__arrow--prev[data-v-231f5b96] {\n  margin-right: auto;\n}\n.scroller__arrow--prev svg[data-v-231f5b96] {\n  margin-right: 0.625rem;\n}\n.scroller__arrow--next[data-v-231f5b96] {\n  margin-left: auto;\n}\n.scroller__arrow--next svg[data-v-231f5b96] {\n  margin-left: 0.625rem;\n}\n.scroller__arrow[data-v-231f5b96]:hover, .scroller__arrow[data-v-231f5b96]:focus {\n  color: #00a2ed;\n}\n.scroller__dots[data-v-231f5b96] {\n  display: flex;\n  justify-content: center;\n  margin-top: 1.5rem;\n}\n.scroller__dots button[data-v-231f5b96] {\n  flex: 0 0 0.5rem;\n  width: 0.5rem;\n  height: 0.5rem;\n  padding: 0;\n  background: rgba(0, 0, 0, 0.1);\n  border: 0;\n  border-radius: 50%;\n  outline: 0;\n  cursor: pointer;\n  transition: background 300ms ease-in-out;\n}\n.scroller__dots button + button[data-v-231f5b96] {\n  margin-left: 0.625rem;\n}\n.scroller__dots button[data-v-231f5b96]:hover, .scroller__dots button[data-v-231f5b96]:focus {\n  background: rgba(0, 162, 237, 0.5);\n}\n.scroller__dots button.is-active[data-v-231f5b96] {\n  background: #00a2ed;\n}\n.scroller--no-overflow .scroller__content[data-v-231f5b96] {\n  overflow: hidden;\n}\n.fade-enter-active[data-v-231f5b96],\n.fade-leave-active[data-v-231f5b96] {\n  transition: opacity 300ms ease-in-out;\n}\n.fade-enter[data-v-231f5b96],\n.fade-leave-to[data-v-231f5b96] {\n  opacity: 0;\n}";
+	var css_248z = ".scroller[data-v-6742d59a] {\n  position: relative;\n  max-width: 100%;\n  overflow: hidden;\n}\n.scroller__wrapper[data-v-6742d59a] {\n  position: relative;\n}\n.scroller__main[data-v-6742d59a] {\n  -ms-overflow-style: none;\n  scrollbar-width: none;\n  scrollbar-height: none;\n  overflow-x: auto;\n  overflow-y: hidden;\n}\n.scroller__main[data-v-6742d59a]::-webkit-scrollbar {\n  display: none;\n}\n.scroller__content[data-v-6742d59a] {\n  display: flex;\n  flex-wrap: nowrap;\n  margin: 0 auto;\n}\n.scroller__arrows[data-v-6742d59a] {\n  display: flex;\n  justify-content: space-between;\n  margin: auto;\n}\n.scroller__arrow[data-v-6742d59a] {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  padding: 0;\n  font-family: inherit;\n  background: none;\n  border: 0;\n  outline: 0;\n  cursor: pointer;\n  transition: all 300ms ease-in-out;\n}\n.scroller__arrow--prev[data-v-6742d59a] {\n  margin-right: auto;\n}\n.scroller__arrow--prev svg[data-v-6742d59a] {\n  margin-right: 0.625rem;\n}\n.scroller__arrow--next[data-v-6742d59a] {\n  margin-left: auto;\n}\n.scroller__arrow--next svg[data-v-6742d59a] {\n  margin-left: 0.625rem;\n}\n.scroller__arrow[data-v-6742d59a]:hover, .scroller__arrow[data-v-6742d59a]:focus {\n  color: #00a2ed;\n}\n.scroller__dots[data-v-6742d59a] {\n  display: flex;\n  justify-content: center;\n  margin-top: 1.5rem;\n}\n.scroller__dots button[data-v-6742d59a] {\n  flex: 0 0 0.5rem;\n  width: 0.5rem;\n  height: 0.5rem;\n  padding: 0;\n  background: rgba(0, 0, 0, 0.1);\n  border: 0;\n  border-radius: 50%;\n  outline: 0;\n  cursor: pointer;\n  transition: background 300ms ease-in-out;\n}\n.scroller__dots button + button[data-v-6742d59a] {\n  margin-left: 0.625rem;\n}\n.scroller__dots button[data-v-6742d59a]:hover, .scroller__dots button[data-v-6742d59a]:focus {\n  background: rgba(0, 162, 237, 0.5);\n}\n.scroller__dots button.is-active[data-v-6742d59a] {\n  background: #00a2ed;\n}\n.scroller--no-overflow .scroller__content[data-v-6742d59a] {\n  overflow: hidden;\n}\n.fade-enter-active[data-v-6742d59a],\n.fade-leave-active[data-v-6742d59a] {\n  transition: opacity 300ms ease-in-out;\n}\n.fade-enter[data-v-6742d59a],\n.fade-leave-to[data-v-6742d59a] {\n  opacity: 0;\n}";
 	styleInject(css_248z);
 
 	function normalizeComponent(template, style, script, scopeId, isFunctionalTemplate, moduleIdentifier /* server only */, shadowMode, createInjector, createInjectorSSR, createInjectorShadow) {
@@ -1626,17 +1640,20 @@
 	        ? _c(
 	            "div",
 	            { staticClass: "scroller__dots" },
-	            _vm._l(_vm.itemCount, function (index) {
-	              return _c("button", {
-	                key: index,
-	                class: { "is-active": _vm.activeItem === index - 1 },
-	                on: {
-	                  click: function ($event) {
-	                    return _vm.moveCarousel(index - 1, "dot")
+	            _vm._l(
+	              Math.ceil(_vm.itemCount / _vm.computedOptions.itemsToScroll),
+	              function (index) {
+	                return _c("button", {
+	                  key: index,
+	                  class: { "is-active": _vm.isDotActive(index) },
+	                  on: {
+	                    click: function ($event) {
+	                      return _vm.moveCarousel(index - 1, "dot")
+	                    },
 	                  },
-	                },
-	              })
-	            }),
+	                })
+	              }
+	            ),
 	            0
 	          )
 	        : _vm._e(),
@@ -1649,7 +1666,7 @@
 	  /* style */
 	  const __vue_inject_styles__ = undefined;
 	  /* scoped */
-	  const __vue_scope_id__ = "data-v-231f5b96";
+	  const __vue_scope_id__ = "data-v-6742d59a";
 	  /* module identifier */
 	  const __vue_module_identifier__ = undefined;
 	  /* functional template */

@@ -160,6 +160,25 @@ export default {
 			</vue-slider-native>
 		</div>
 
+		<div class="row">
+			<div class="column">
+				<h2>Move more items at once</h2>
+			</div>
+		</div>
+
+		<div class="scroller">
+			<vue-slider-native
+				scroller-id="scroller-multimove"
+				:component="AppItem"
+				:items="items"
+				:options="{
+					moveOnClick: true,
+					itemsToScroll: 5,
+					dots: true
+				}"
+			/>
+		</div>
+
 		<!--<div class="row">
 			<div class="column">
 				<h2>TODO: Full width mode</h2>

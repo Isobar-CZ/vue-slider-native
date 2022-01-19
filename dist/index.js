@@ -1,5 +1,5 @@
 /*!
-  * vue-slider-native v0.0.12
+  * vue-slider-native v0.0.13
   * (c) 2021 Isobar
   * @license ISC
   */
@@ -1301,7 +1301,7 @@
 				const maxCount = (index - 1) * this.computedOptions.itemsToScroll + this.computedOptions.itemsToScroll;
 				return this.activeItem >= minCount && this.activeItem < maxCount;
 			},
-			
+
 			handleItemClick(itemIndex, itemData) {
 				this.$emit('item-clicked', {
 					itemIndex,
@@ -1338,7 +1338,7 @@
 	  }
 	}
 
-	var css_248z = ".scroller[data-v-2559dc2b] {\n  position: relative;\n  max-width: 100%;\n  overflow: hidden;\n}\n.scroller__wrapper[data-v-2559dc2b] {\n  position: relative;\n}\n.scroller__main[data-v-2559dc2b] {\n  -ms-overflow-style: none;\n  scrollbar-width: none;\n  scrollbar-height: none;\n  overflow-x: auto;\n  overflow-y: hidden;\n}\n.scroller__main[data-v-2559dc2b]::-webkit-scrollbar {\n  display: none;\n}\n.scroller__content[data-v-2559dc2b] {\n  display: flex;\n  flex-wrap: nowrap;\n  margin: 0 auto;\n}\n.scroller__arrows[data-v-2559dc2b] {\n  display: flex;\n  justify-content: space-between;\n  margin: auto;\n}\n.scroller__arrow[data-v-2559dc2b] {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  padding: 0;\n  font-family: inherit;\n  background: none;\n  border: 0;\n  outline: 0;\n  cursor: pointer;\n  transition: all 300ms ease-in-out;\n}\n.scroller__arrow--prev[data-v-2559dc2b] {\n  margin-right: auto;\n}\n.scroller__arrow--prev svg[data-v-2559dc2b] {\n  margin-right: 0.625rem;\n}\n.scroller__arrow--next[data-v-2559dc2b] {\n  margin-left: auto;\n}\n.scroller__arrow--next svg[data-v-2559dc2b] {\n  margin-left: 0.625rem;\n}\n.scroller__arrow[data-v-2559dc2b]:hover, .scroller__arrow[data-v-2559dc2b]:focus {\n  color: #00a2ed;\n}\n.scroller__dots[data-v-2559dc2b] {\n  display: flex;\n  justify-content: center;\n  margin-top: 1.5rem;\n}\n.scroller__dots button[data-v-2559dc2b] {\n  flex: 0 0 0.5rem;\n  width: 0.5rem;\n  height: 0.5rem;\n  padding: 0;\n  background: rgba(0, 0, 0, 0.1);\n  border: 0;\n  border-radius: 50%;\n  outline: 0;\n  cursor: pointer;\n  transition: background 300ms ease-in-out;\n}\n.scroller__dots button + button[data-v-2559dc2b] {\n  margin-left: 0.625rem;\n}\n.scroller__dots button[data-v-2559dc2b]:hover, .scroller__dots button[data-v-2559dc2b]:focus {\n  background: rgba(0, 162, 237, 0.5);\n}\n.scroller__dots button.is-active[data-v-2559dc2b] {\n  background: #00a2ed;\n}\n.scroller--no-overflow .scroller__content[data-v-2559dc2b] {\n  overflow: hidden;\n}\n.fade-enter-active[data-v-2559dc2b],\n.fade-leave-active[data-v-2559dc2b] {\n  transition: opacity 300ms ease-in-out;\n}\n.fade-enter[data-v-2559dc2b],\n.fade-leave-to[data-v-2559dc2b] {\n  opacity: 0;\n}";
+	var css_248z = ".scroller[data-v-3037d38e] {\n  position: relative;\n  max-width: 100%;\n  overflow: hidden;\n}\n.scroller__wrapper[data-v-3037d38e] {\n  position: relative;\n}\n.scroller__main[data-v-3037d38e] {\n  -ms-overflow-style: none;\n  scrollbar-width: none;\n  scrollbar-height: none;\n  overflow-x: auto;\n  overflow-y: hidden;\n}\n.scroller__main[data-v-3037d38e]::-webkit-scrollbar {\n  display: none;\n}\n.scroller__content[data-v-3037d38e] {\n  display: flex;\n  flex-wrap: nowrap;\n  margin: 0 auto;\n}\n.scroller__arrows[data-v-3037d38e] {\n  display: flex;\n  justify-content: space-between;\n  margin: auto;\n}\n.scroller__arrow[data-v-3037d38e] {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  padding: 0;\n  font-family: inherit;\n  background: none;\n  border: 0;\n  outline: 0;\n  cursor: pointer;\n  transition: all 300ms ease-in-out;\n}\n.scroller__arrow--prev[data-v-3037d38e] {\n  margin-right: auto;\n}\n.scroller__arrow--prev svg[data-v-3037d38e] {\n  margin-right: 0.625rem;\n}\n.scroller__arrow--next[data-v-3037d38e] {\n  margin-left: auto;\n}\n.scroller__arrow--next svg[data-v-3037d38e] {\n  margin-left: 0.625rem;\n}\n.scroller__arrow[data-v-3037d38e]:hover, .scroller__arrow[data-v-3037d38e]:focus {\n  color: #00a2ed;\n}\n.scroller__dots[data-v-3037d38e] {\n  display: flex;\n  justify-content: center;\n  margin-top: 1.5rem;\n}\n.scroller__dots button[data-v-3037d38e] {\n  flex: 0 0 0.5rem;\n  width: 0.5rem;\n  height: 0.5rem;\n  padding: 0;\n  background: rgba(0, 0, 0, 0.1);\n  border: 0;\n  border-radius: 50%;\n  outline: 0;\n  cursor: pointer;\n  transition: background 300ms ease-in-out;\n}\n.scroller__dots button + button[data-v-3037d38e] {\n  margin-left: 0.625rem;\n}\n.scroller__dots button[data-v-3037d38e]:hover, .scroller__dots button[data-v-3037d38e]:focus {\n  background: rgba(0, 162, 237, 0.5);\n}\n.scroller__dots button.is-active[data-v-3037d38e] {\n  background: #00a2ed;\n}\n.scroller--no-overflow .scroller__content[data-v-3037d38e] {\n  overflow: hidden;\n}\n.fade-enter-active[data-v-3037d38e],\n.fade-leave-active[data-v-3037d38e] {\n  transition: opacity 300ms ease-in-out;\n}\n.fade-enter[data-v-3037d38e],\n.fade-leave-to[data-v-3037d38e] {\n  opacity: 0;\n}";
 	styleInject(css_248z);
 
 	function normalizeComponent(template, style, script, scopeId, isFunctionalTemplate, moduleIdentifier /* server only */, shadowMode, createInjector, createInjectorSSR, createInjectorShadow) {
@@ -1658,7 +1658,10 @@
 	                  class: { "is-active": _vm.isDotActive(index) },
 	                  on: {
 	                    click: function ($event) {
-	                      return _vm.moveCarousel(index - 1, "dot")
+	                      _vm.moveCarousel(
+	                        (index - 1) * _vm.computedOptions.itemsToScroll,
+	                        "dot"
+	                      );
 	                    },
 	                  },
 	                })
@@ -1676,7 +1679,7 @@
 	  /* style */
 	  const __vue_inject_styles__ = undefined;
 	  /* scoped */
-	  const __vue_scope_id__ = "data-v-2559dc2b";
+	  const __vue_scope_id__ = "data-v-3037d38e";
 	  /* module identifier */
 	  const __vue_module_identifier__ = undefined;
 	  /* functional template */

@@ -90,7 +90,7 @@
 				v-for="index in Math.ceil(itemCount / computedOptions.itemsToScroll)"
 				:key="index"
 				:class="{'is-active': isDotActive(index)}"
-				@click="moveCarousel(index - 1, 'dot')"
+				@click="moveCarousel((index - 1) * computedOptions.itemsToScroll, 'dot')"
 			/>
 		</div>
 	</div>
@@ -339,7 +339,7 @@
 				const maxCount = (index - 1) * this.computedOptions.itemsToScroll + this.computedOptions.itemsToScroll;
 				return this.activeItem >= minCount && this.activeItem < maxCount;
 			},
-			
+
 			handleItemClick(itemIndex, itemData) {
 				this.$emit('item-clicked', {
 					itemIndex,

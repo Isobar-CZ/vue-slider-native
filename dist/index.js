@@ -1,5 +1,5 @@
 /*!
-  * vue-slider-native v0.0.10
+  * vue-slider-native v0.0.12
   * (c) 2021 Isobar
   * @license ISC
   */

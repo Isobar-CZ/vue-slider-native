@@ -1,7 +1,7 @@
 <template>
 	<div class="column">
 		<div class="item">
-			<img :src="image" :alt="item.title" class="item__image" @click="$emit('item-clicked', {item})" />
+			<img :src="image" :alt="item.title" class="item__image" @click="$emit('item-clicked', item)" />
 
 			<div class="item__content">
 				<h2 class="item__title">

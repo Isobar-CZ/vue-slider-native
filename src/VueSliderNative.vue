@@ -71,6 +71,7 @@
 							'is-next': index >= activeItem + computedOptions.highlightItems
 						}"
 						@click.native="moveCarousel(index, 'item')"
+						@item-clicked="handleItemClick(index, $event)"
 					/>
 
 					<div
@@ -264,8 +265,6 @@
 
 			moveCarousel(moveTo, origin) {
 				if (!this.movementOrigin) {
-					this.$emit('item-clicked', moveTo);
-
 					if (moveTo > this.items.length - 1) {
 						moveTo = this.items.length - 1;
 					} else if (moveTo < 0) {
@@ -339,6 +338,13 @@
 				const minCount = (index - 1) * this.computedOptions.itemsToScroll;
 				const maxCount = (index - 1) * this.computedOptions.itemsToScroll + this.computedOptions.itemsToScroll;
 				return this.activeItem >= minCount && this.activeItem < maxCount;
+			},
+			
+			handleItemClick(itemIndex, itemData) {
+				this.$emit('item-clicked', {
+					itemIndex,
+					itemData
+				});
 			}
 		}
 	};

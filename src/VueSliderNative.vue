@@ -203,14 +203,14 @@
 			this.$refs.scroller.addEventListener('scroll', this.debouncedHandleHorizontalScroll);
 
 			const preactivated = this.options.preactivatedItem;
+
 			if (preactivated) {
-				/*
-					another setTimeout, but without anything or even with nextTick or updated() it didn't scroll,
-					it just highlighted preactivated item (maybe some problem with vue-scrollto?)
-				*/
-				setTimeout(() => {
-					this.moveCarousel(preactivated, 'preactivated', 0);
-				}, 100);
+				const checkExist = setInterval(() => {
+					if (typeof this.$refs['scroller-row'] !== undefined && this.$refs['scroller-row']) {
+						this.moveCarousel(preactivated, 'preactivated', 0);
+						clearInterval(checkExist);
+					}
+				}, 250);
 			}
 
 			window.addEventListener('resize', this.storeWindowWidth);

@@ -1,6 +1,6 @@
 {
   "name": "vue-slider-native",
-  "version": "0.0.13",
+  "version": "0.0.15",
   "description": "Carousel with native scroll",
   "source": "src/index.vue",
   "main": "dist/index.js",

@@ -99,9 +99,10 @@ export default {
 			<div class="column">
 				<h2>Callbacks</h2>
 				<h3>activeItemUpdated(activeItem)</h3>
-				<p>
-					&lt;vue-slider-native @activeItemUpdated="doSomeAction(activeItemIndex)"&gt;
-				</p>
+				<vue-code-highlight language="html">
+					<pre>
+&lt;vue-slider-native @activeItemUpdated="doSomeAction(activeItemIndex)"&gt;</pre>
+				</vue-code-highlight>
 			</div>
 		</div>
 
@@ -340,6 +341,10 @@ export default {
 		font: 16px/1.4 Arial;
 	}
 
+	pre {
+		max-width: 100%;
+	}
+
 	.row {
 		display: flex;
 		max-width: rem(1200);
@@ -354,6 +359,7 @@ export default {
 
 	.column {
 		flex: 1;
+		min-width: 0;
 		padding: 0 rem(15);
 	}
 
@@ -364,6 +370,7 @@ export default {
 
 	.scroller .column {
 		flex: 0 0 25%;
+		min-width: initial;
 	}
 
 	#scroller2 {

@@ -307,7 +307,7 @@
 			handleArrows() {
 				const element = this.$refs.scroller;
 				this.isOnStart = element.scrollLeft < 100;
-				this.isOnEnd = ((element.scrollWidth - element.scrollLeft) <= element.clientWidth + 25) || (this.activeItem - 1) === this.itemCount;
+				this.isOnEnd = ((element.scrollWidth - element.scrollLeft) <= element.clientWidth + 50) || (this.activeItem - 1) === this.itemCount;
 			},
 
 			scrollToDone() {

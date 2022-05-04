@@ -1,5 +1,5 @@
 /*!
-  * vue-slider-native v0.0.16
+  * vue-slider-native v0.0.17
   * (c) 2021 Isobar
   * @license ISC
   */
@@ -1269,7 +1269,7 @@
 			handleArrows() {
 				const element = this.$refs.scroller;
 				this.isOnStart = element.scrollLeft < 100;
-				this.isOnEnd = ((element.scrollWidth - element.scrollLeft) <= element.clientWidth + 25) || (this.activeItem - 1) === this.itemCount;
+				this.isOnEnd = ((element.scrollWidth - element.scrollLeft) <= element.clientWidth + 50) || (this.activeItem - 1) === this.itemCount;
 			},
 
 			scrollToDone() {
@@ -1338,7 +1338,7 @@
 	  }
 	}
 
-	var css_248z = ".scroller[data-v-c9de37d8] {\n  position: relative;\n  max-width: 100%;\n  overflow: hidden;\n}\n.scroller__wrapper[data-v-c9de37d8] {\n  position: relative;\n}\n.scroller__main[data-v-c9de37d8] {\n  -ms-overflow-style: none;\n  scrollbar-width: none;\n  scrollbar-height: none;\n  overflow-x: auto;\n  overflow-y: hidden;\n}\n.scroller__main[data-v-c9de37d8]::-webkit-scrollbar {\n  display: none;\n}\n.scroller__content[data-v-c9de37d8] {\n  display: flex;\n  flex-wrap: nowrap;\n  margin: 0 auto;\n}\n.scroller__arrows[data-v-c9de37d8] {\n  display: flex;\n  justify-content: space-between;\n  margin: auto;\n}\n.scroller__arrow[data-v-c9de37d8] {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  padding: 0;\n  font-family: inherit;\n  background: none;\n  border: 0;\n  outline: 0;\n  cursor: pointer;\n  transition: all 300ms ease-in-out;\n}\n.scroller__arrow--prev[data-v-c9de37d8] {\n  margin-right: auto;\n}\n.scroller__arrow--prev svg[data-v-c9de37d8] {\n  margin-right: 0.625rem;\n}\n.scroller__arrow--next[data-v-c9de37d8] {\n  margin-left: auto;\n}\n.scroller__arrow--next svg[data-v-c9de37d8] {\n  margin-left: 0.625rem;\n}\n.scroller__arrow[data-v-c9de37d8]:hover, .scroller__arrow[data-v-c9de37d8]:focus {\n  color: #00a2ed;\n}\n.scroller__dots[data-v-c9de37d8] {\n  display: flex;\n  justify-content: center;\n  margin-top: 1.5rem;\n}\n.scroller__dots button[data-v-c9de37d8] {\n  flex: 0 0 0.5rem;\n  width: 0.5rem;\n  height: 0.5rem;\n  padding: 0;\n  background: rgba(0, 0, 0, 0.1);\n  border: 0;\n  border-radius: 50%;\n  outline: 0;\n  cursor: pointer;\n  transition: background 300ms ease-in-out;\n}\n.scroller__dots button + button[data-v-c9de37d8] {\n  margin-left: 0.625rem;\n}\n.scroller__dots button[data-v-c9de37d8]:hover, .scroller__dots button[data-v-c9de37d8]:focus {\n  background: rgba(0, 162, 237, 0.5);\n}\n.scroller__dots button.is-active[data-v-c9de37d8] {\n  background: #00a2ed;\n}\n.scroller--no-overflow .scroller__content[data-v-c9de37d8] {\n  overflow: hidden;\n}\n.fade-enter-active[data-v-c9de37d8],\n.fade-leave-active[data-v-c9de37d8] {\n  transition: opacity 300ms ease-in-out;\n}\n.fade-enter[data-v-c9de37d8],\n.fade-leave-to[data-v-c9de37d8] {\n  opacity: 0;\n}";
+	var css_248z = ".scroller[data-v-2a3c0ebc] {\n  position: relative;\n  max-width: 100%;\n  overflow: hidden;\n}\n.scroller__wrapper[data-v-2a3c0ebc] {\n  position: relative;\n}\n.scroller__main[data-v-2a3c0ebc] {\n  -ms-overflow-style: none;\n  scrollbar-width: none;\n  scrollbar-height: none;\n  overflow-x: auto;\n  overflow-y: hidden;\n}\n.scroller__main[data-v-2a3c0ebc]::-webkit-scrollbar {\n  display: none;\n}\n.scroller__content[data-v-2a3c0ebc] {\n  display: flex;\n  flex-wrap: nowrap;\n  margin: 0 auto;\n}\n.scroller__arrows[data-v-2a3c0ebc] {\n  display: flex;\n  justify-content: space-between;\n  margin: auto;\n}\n.scroller__arrow[data-v-2a3c0ebc] {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  padding: 0;\n  font-family: inherit;\n  background: none;\n  border: 0;\n  outline: 0;\n  cursor: pointer;\n  transition: all 300ms ease-in-out;\n}\n.scroller__arrow--prev[data-v-2a3c0ebc] {\n  margin-right: auto;\n}\n.scroller__arrow--prev svg[data-v-2a3c0ebc] {\n  margin-right: 0.625rem;\n}\n.scroller__arrow--next[data-v-2a3c0ebc] {\n  margin-left: auto;\n}\n.scroller__arrow--next svg[data-v-2a3c0ebc] {\n  margin-left: 0.625rem;\n}\n.scroller__arrow[data-v-2a3c0ebc]:hover, .scroller__arrow[data-v-2a3c0ebc]:focus {\n  color: #00a2ed;\n}\n.scroller__dots[data-v-2a3c0ebc] {\n  display: flex;\n  justify-content: center;\n  margin-top: 1.5rem;\n}\n.scroller__dots button[data-v-2a3c0ebc] {\n  flex: 0 0 0.5rem;\n  width: 0.5rem;\n  height: 0.5rem;\n  padding: 0;\n  background: rgba(0, 0, 0, 0.1);\n  border: 0;\n  border-radius: 50%;\n  outline: 0;\n  cursor: pointer;\n  transition: background 300ms ease-in-out;\n}\n.scroller__dots button + button[data-v-2a3c0ebc] {\n  margin-left: 0.625rem;\n}\n.scroller__dots button[data-v-2a3c0ebc]:hover, .scroller__dots button[data-v-2a3c0ebc]:focus {\n  background: rgba(0, 162, 237, 0.5);\n}\n.scroller__dots button.is-active[data-v-2a3c0ebc] {\n  background: #00a2ed;\n}\n.scroller--no-overflow .scroller__content[data-v-2a3c0ebc] {\n  overflow: hidden;\n}\n.fade-enter-active[data-v-2a3c0ebc],\n.fade-leave-active[data-v-2a3c0ebc] {\n  transition: opacity 300ms ease-in-out;\n}\n.fade-enter[data-v-2a3c0ebc],\n.fade-leave-to[data-v-2a3c0ebc] {\n  opacity: 0;\n}";
 	styleInject(css_248z);
 
 	function normalizeComponent(template, style, script, scopeId, isFunctionalTemplate, moduleIdentifier /* server only */, shadowMode, createInjector, createInjectorSSR, createInjectorShadow) {
@@ -1679,7 +1679,7 @@
 	  /* style */
 	  const __vue_inject_styles__ = undefined;
 	  /* scoped */
-	  const __vue_scope_id__ = "data-v-c9de37d8";
+	  const __vue_scope_id__ = "data-v-2a3c0ebc";
 	  /* module identifier */
 	  const __vue_module_identifier__ = undefined;
 	  /* functional template */
